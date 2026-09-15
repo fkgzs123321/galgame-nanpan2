@@ -107,11 +107,24 @@
       if(m&&m.stat_data&&m.stat_data.主角)return m.stat_data;}}catch(e){}
     return null;
   }
+  /* 取最新楼层号 —— iframe 里 getLastMessageId() 可能不可用，要多来源兜底 */
+  function 最新楼(){
+    try{if(typeof getLastMessageId==='function'){var a=getLastMessageId();if(a>0)return a;}}catch(e){}
+    try{if(typeof getCurrentMessageId==='function'){var b=getCurrentMessageId();if(b>0)return b;}}catch(e){}
+    try{var w=window.parent||window;if(w&&typeof w.getLastMessageId==='function'){var c=w.getLastMessageId();if(c>0)return c;}}catch(e){}
+    try{var ctx=(typeof SillyTavern!=='undefined'&&SillyTavern.getContext)?SillyTavern.getContext():null;
+      if(ctx&&ctx.chat&&ctx.chat.length)return ctx.chat.length-1;}catch(e){}
+    try{var w2=window.parent||window;var c2=w2.SillyTavern&&w2.SillyTavern.getContext?w2.SillyTavern.getContext():null;
+      if(c2&&c2.chat&&c2.chat.length)return c2.chat.length-1;}catch(e){}
+    try{if(typeof chat!=='undefined'&&chat.length)return chat.length-1;}catch(e){}
+    /* 最后手段：从 30 层往下探，找最后一条能读到变量的 */
+    for(var i=30;i>=0;i--){ if(取数据(i)) return i; }
+    return 0;
+  }
   function 最好楼层(){
-    var last=0;
-    try{last=getLastMessageId();}catch(e){try{if(typeof chat!=='undefined')last=chat.length-1;}catch(e2){}}
+    var last=最新楼();
     var 兜底=null;
-    for(var i=last;i>=0&&i>last-25;i--){
+    for(var i=last;i>=0&&i>last-30;i--){
       var sd=取数据(i);if(!sd)continue;
       if(!兜底)兜底={楼:i,d:sd};
       if(键((sd.局面&&sd.局面.当前选项)||{}).length) return {楼:i,d:sd};
@@ -220,11 +233,21 @@
   }
 
   var 楼=-1;
+  var 上次指纹='';
+  function 指纹(d){try{return JSON.stringify([d.主角,d.她,d.局面,d.时间]);}catch(e){return String(Math.random());}}
   function 刷新(){
     var r=最好楼层(); if(!r)return; 楼=r.楼;
     var 盒=document.getElementById(NS); if(!盒)return;
+    var fp=指纹(r.d)+'|'+r.楼;
+    if(fp===上次指纹) return;            /* ★ 值没变就不重画 → 折叠不会被重置 */
+    上次指纹=fp;
+    /* 记住折叠状态 */
+    var 开={}; var ds=盒.querySelectorAll('details');
+    for(var i=0;i<ds.length;i++) 开[i]=ds[i].open;
     盒.innerHTML=画(r.d);
     盒.setAttribute('data-'+NS+'-init','1');
+    var ds2=盒.querySelectorAll('details');
+    for(var j=0;j<ds2.length;j++) if(开[j]!==undefined) ds2[j].open=开[j];
     绑(盒);
   }
 
