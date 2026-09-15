@@ -101,9 +101,20 @@
   function 键(o){try{return Object.keys(o||{}).filter(function(k){return 有(o[k])||typeof o[k]==='object';});}catch(e){return [];}}
   function 阶(s){s=String(s||'');if(/恋|爱/.test(s))return '恋';if(/依/.test(s))return '依';if(/亲/.test(s))return '亲';return '';}
 
+  /* 首选 -1：官方语义 = 最新楼层（util/mvu.ts:12），不需要自己算楼层号 */
+  function 取最新(){
+    try{var v=getVariables({type:'message',message_id:-1});if(v&&v.stat_data&&v.stat_data.主角)return v.stat_data;}catch(e){}
+    try{if(typeof Mvu!=='undefined'&&Mvu.getMvuData){var m=Mvu.getMvuData({type:'message',message_id:-1});
+      if(m&&m.stat_data&&m.stat_data.主角)return m.stat_data;}}catch(e){}
+    try{var w=window.parent||window;
+      if(w&&typeof w.getVariables==='function'){var v2=w.getVariables({type:'message',message_id:-1});
+        if(v2&&v2.stat_data&&v2.stat_data.主角)return v2.stat_data;}}catch(e){}
+    return null;
+  }
   function 取数据(楼){
-    try{var v=getVariables({type:'message',message_id:楼});if(v&&v.stat_data&&v.stat_data.主角)return v.stat_data;}catch(e){}
-    try{if(typeof Mvu!=='undefined'&&Mvu.getMvuData){var m=Mvu.getMvuData({type:'message',message_id:楼});
+    if(楼===undefined||楼===null) return 取最新();
+    try{var v=getVariables({type:'message',message_id:(楼>=0?楼:-1)});if(v&&v.stat_data&&v.stat_data.主角)return v.stat_data;}catch(e){}
+    try{if(typeof Mvu!=='undefined'&&Mvu.getMvuData){var m=Mvu.getMvuData({type:'message',message_id:(楼>=0?楼:-1)});
       if(m&&m.stat_data&&m.stat_data.主角)return m.stat_data;}}catch(e){}
     return null;
   }
@@ -122,6 +133,8 @@
     return 0;
   }
   function 最好楼层(){
+    var 直取=取最新();
+    if(直取) return {楼:-1, d:直取};       /* ★ 官方语义直接命中，不用算楼层 */
     var last=最新楼();
     var 兜底=null;
     for(var i=last;i>=0&&i>last-30;i--){
@@ -258,7 +271,7 @@
       var jj=v.stat_data.局面||(v.stat_data.局面={});
       变化(pr,jj);
       return v;
-    },{type:'message',message_id:楼});}catch(e){}
+    },{type:'message',message_id:(楼>=0?楼:-1)});}catch(e){}
     var res=document.getElementById(NS).querySelector('.res');
     if(res){res.className='res on '+结果类;res.textContent=文案;}
     var 全部=document.getElementById(NS).querySelectorAll('.opt button');
