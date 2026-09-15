@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+#gg2{--bg0:#0a0c11;--bg1:#11151d;--line:#28303d;--ink:#d6dded;--dim:#78829a;
+  --gold:#e8b84b;--grn:#7ec8a0;--rose:#e07a9a;--blu:#8fb8d8;
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);
+  background:linear-gradient(180deg,var(--bg1),var(--bg0));border:1px solid var(--line);
+  border-radius:12px;padding:12px 14px;margin:10px 0;font-size:13px;line-height:1.7}
+#gg2 h4{margin:0 0 9px;font-size:14px;font-weight:700;color:#e3e9f5;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#gg2 h4 .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);flex:0 0 auto}
+#gg2 h4 .sub{color:var(--dim);font-size:11.5px;margin-left:auto;font-weight:400}
+#gg2 .bars{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:9px}
+#gg2 .bar{display:flex;align-items:center;gap:7px}
+#gg2 .bar .lb{color:var(--dim);font-size:11.5px}
+#gg2 .tk{display:inline-block;position:relative;height:7px;width:88px;border-radius:4px;background:#1b2130;overflow:hidden}
+#gg2 .tk>i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;transition:width .3s}
+#gg2 .tk.hp>i{background:linear-gradient(90deg,#a05252,#e07a7a)}
+#gg2 .tk.re>i{background:linear-gradient(90deg,#4a6fa0,#8fb8d8)}
+#gg2 .tk.ex>i{background:linear-gradient(90deg,#8a5aa0,#d8a0e0)}
+#gg2 .bar .vv{font-variant-numeric:tabular-nums;font-weight:600;min-width:26px;text-align:right}
+#gg2 .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px}
+#gg2 .chip{background:#1a2029;border:1px solid #262e3a;border-radius:6px;padding:1px 7px;font-size:11.5px;color:#98a2b6}
+#gg2 .chip b{color:#cfd7e6;margin-left:4px;font-variant-numeric:tabular-nums}
+#gg2 .cam{background:rgba(232,184,75,.05);border:1px solid rgba(232,184,75,.25);border-radius:9px;padding:8px 10px;margin-bottom:9px}
+#gg2 .cam .t{color:var(--gold);font-size:11.5px;margin-bottom:3px}
+#gg2 .cam .b{font-size:12.5px;color:#e0d5b8}
+#gg2 .girls{display:flex;flex-direction:column;gap:4px;margin-bottom:9px}
+#gg2 .g{display:flex;align-items:center;gap:8px;font-size:12px}
+#gg2 .g .nm{min-width:76px;color:#c2cbdc}
+#gg2 .g .st{min-width:42px;font-size:11px;color:var(--blu)}
+#gg2 .g .af{font-variant-numeric:tabular-nums;color:#98a2b6;min-width:36px;text-align:right}
+#gg2 .opts{display:flex;flex-direction:column;gap:6px}
+#gg2 .opt{display:flex;align-items:flex-start;gap:9px;background:#141a24;border:1px solid #232b38;border-radius:9px;padding:7px 10px}
+#gg2 .opt .no{width:20px;height:20px;border-radius:5px;background:#1c2330;color:var(--gold);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+#gg2 .opt .tx{flex:1;font-size:12.5px}
+#gg2 .opt .lv{font-size:10.5px;padding:1px 6px;border-radius:5px;background:#1a2029;border:1px solid #262e3a;color:#8d97ab;flex:0 0 auto}
+#gg2 .opt .lv.mid{color:var(--blu);border-color:#2b4a63}
+#gg2 .opt .lv.strong{color:#d8a0e0;border-color:#4a2b63}
+#gg2 .opt .lv.extreme{color:var(--rose);border-color:#4a2632}
+#gg2 .opt .lj{background:transparent;border:0;color:var(--dim);cursor:pointer;font-size:13px;padding:0 3px;flex:0 0 auto}
+#gg2 .opt .rj{font-size:11px;padding:2px 9px;border-radius:6px;cursor:pointer;border:1px solid #4a2632;background:#221318;color:var(--rose);flex:0 0 auto;font-family:inherit}
+#gg2 .opt .rj:disabled{border-color:#262d38;background:#181d24;color:#4a5361;cursor:not-allowed}
+#gg2 .opt .rj:hover:not(:disabled){background:#2e1a20}
+#gg2 .res{margin-top:8px;padding:7px 10px;border-radius:8px;font-size:12px;display:none}
+#gg2 .res.on{display:block}
+#gg2 .res.ok{border:1px solid #2b4a37;background:#16221b;color:#8fd0a8}
+#gg2 .res.no{border:1px solid #4a2632;background:#221318;color:#e8a0a0}
+#gg2 .hint{color:#4e5769;font-size:11px;margin-top:7px;font-style:italic}
+#gg2 .tip{color:#4e5769;font-size:11px;margin-top:4px}
+</style>
+</head>
+<body>
+<div id="gg2"><div class="tip">状态栏读取中…</div></div>
+<script>
+(function () {
+  var NS = 'gg2';
+  var 等级 = {
+    微: { c: [3, 5], r: 90, k: 'micro' }, 中: { c: [10, 15], r: 60, k: 'mid' },
+    强: { c: [25, 35], r: 30, k: 'strong' }, 极: { c: [50, 60], r: 10, k: 'extreme' },
+    锁: { c: null, r: 0, k: 'lock' }
+  };
+  var 英中 = { micro: '微', mid: '中', strong: '强', extreme: '极', lock: '锁' };
+  function 归(v) { v = String(v || ''); return 等级[v] ? v : (英中[v] || '微'); }
+  function 数(v, d) { var n = Number(v); return isFinite(n) ? n : (d || 0); }
+  function 夹(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function E(s) {
+    return String(s === undefined || s === null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /* 从最新楼层往回找，只认有 stat_data 的楼层 */
+  function 取数据(楼) {
+    try {
+      var v = getVariables({ type: 'message', message_id: 楼 });
+      if (v && v.stat_data && v.stat_data.主角) return v.stat_data;
+    } catch (e) {}
+    try {
+      if (typeof Mvu !== 'undefined' && Mvu.getMvuData) {
+        var m = Mvu.getMvuData({ type: 'message', message_id: 楼 });
+        if (m && m.stat_data && m.stat_data.主角) return m.stat_data;
+      }
+    } catch (e) {}
+    return null;
+  }
+  function 最近() {
+    var last = 0;
+    try { last = getLastMessageId(); } catch (e) {
+      try { if (typeof chat !== 'undefined') last = chat.length - 1; } catch (e2) {}
+    }
+    for (var i = last; i >= 0 && i > last - 20; i--) { var sd = 取数据(i); if (sd) return { 楼: i, d: sd }; }
+    return null;
+  }
+
+  function 画(d) {
+    var t = d.时间 || {}, sc = d.场景 || {}, p = d.主角 || {}, she = d.她 || {};
+    var ec = d.经济 || {}, ws = d.世界 || {}, 局 = d.局面 || {};
+    var 女角 = d.女角 || ws.女角 || {};
+    var H = '';
+
+    H += '<h4><span class="dot"></span>第 ' + 数(t.天数, 1) + ' 天 · ' + E(t.当前日期 || '—')
+      + '<span class="sub">' + E([t.章节, sc.场景模式, t.天气].filter(Boolean).join(' · ')) + '</span></h4>';
+
+    var hp = 夹(数(p.身体状态), 0, 100), re = 夹(数(p.反抗值), 0, 100);
+    var ex = 夹(数(she.兴奋度 !== undefined ? she.兴奋度 : d.兴奋度), 0, 100);
+    H += '<div class="bars">'
+      + '<span class="bar"><span class="lb">体力</span><span class="tk hp"><i style="width:' + hp + '%"></i></span><span class="vv">' + hp + '</span></span>'
+      + '<span class="bar"><span class="lb">反抗</span><span class="tk re"><i style="width:' + re + '%"></i></span><span class="vv">' + re + '</span></span>'
+      + '<span class="bar"><span class="lb">兴奋</span><span class="tk ex"><i style="width:' + ex + '%"></i></span><span class="vv">' + ex + '</span></span>'
+      + '</div>';
+
+    var sk = p.技能 || {};
+    H += '<div class="chips">'
+      + '<span class="chip">说话<b>' + 数(p.说话) + '</b></span>'
+      + '<span class="chip">做事<b>' + 数(p.做事) + '</b></span>'
+      + '<span class="chip">懂东西<b>' + 数(p.懂东西) + '</b></span>'
+      + '<span class="chip">打工<b>' + 数(sk.打工) + '</b></span>'
+      + '<span class="chip">学业<b>' + 数(sk.学业) + '</b></span>'
+      + '<span class="chip">机车<b>' + 数(sk.机车) + '</b></span>'
+      + '<span class="chip">现金<b>' + 数(ec.现金) + '</b></span>'
+      + '<span class="chip">储蓄<b>' + 数(ec.累计储蓄) + '</b></span>'
+      + '</div>';
+
+    H += '<div class="cam"><div class="t">屏幕外的她 · ' + E(she.人设 || '—') + ' · 熟练度 ' + E(she.熟练度 || '—') + '</div>'
+      + '<div class="b">目的进度 ' + 数(she.目的进度) + '%　对她的了解 ' + 数(p.对她的了解) + '　情绪 ' + E(she.情绪 || '—') + '</div></div>';
+
+    var 名 = Object.keys(女角);
+    if (名.length) {
+      H += '<div class="girls">';
+      for (var i = 0; i < 名.length; i++) {
+        var g = 女角[名[i]] || {};
+        var af = 数(g.好感度 !== undefined ? g.好感度 : g.开发度, 0);
+        H += '<div class="g"><span class="nm">' + E(名[i]) + '</span>'
+          + '<span class="st">' + E(g.关系阶段 || g.关系 || '—') + '</span>'
+          + '<span class="tk re" style="width:auto;flex:1;max-width:180px"><i style="width:' + 夹((af + 100) / 2, 0, 100) + '%"></i></span>'
+          + '<span class="af">' + (af > 0 ? '+' : '') + af + '</span></div>';
+      }
+      H += '</div>';
+    }
+
+    var 选 = 局.当前选项 || {}, 键 = Object.keys(选);
+    if (键.length) {
+      H += '<div class="opts">';
+      for (var k = 0; k < 键.length; k++) {
+        var o = 选[键[k]] || {}, lv = 归(o.等级);
+        H += '<div class="opt" data-k="' + E(键[k]) + '">'
+          + '<span class="no">' + E(键[k]) + '</span>'
+          + '<span class="tx">' + E(o.文本 || '') + '</span>'
+          + '<span class="lv ' + 等级[lv].k + '">' + lv + '</span>'
+          + '<span class="lj" title="她点了这个">·</span>'
+          + '<button class="rj" type="button" data-k="' + E(键[k]) + '">拒绝这个</button></div>';
+      }
+      H += '</div><div class="res"></div>';
+      H += '<div class="hint">拒绝要花反抗值，花多少看等级。点了就是当着他的面驳回去。</div>';
+    } else {
+      H += '<div class="hint">这一层她没有摆选项。等她自己动手。</div>';
+    }
+    return H;
+  }
+
+  var 楼 = -1;
+  function 刷新() {
+    var r = 最近();
+    if (!r) return;
+    楼 = r.楼;
+    var 盒 = document.getElementById(NS);
+    if (!盒) {
+      // 由 $('body').load() 注入时容器已在，这里兜底造一个
+      盒 = document.createElement('div');
+      盒.id = NS;
+      var 目标 = document.querySelector('.mes[mesid="' + 楼 + '"] .mes_text') || document.body;
+      目标.appendChild(盒);
+    }
+    盒.innerHTML = 画(r.d);
+    绑(盒);
+  }
+
+  function 绑(盒) {
+    var 按钮 = 盒.querySelectorAll('.rj');
+    for (var i = 0; i < 按钮.length; i++) {
+      按钮[i].onclick = function () {
+        var k = this.getAttribute('data-k');
+        var sd = 取数据(楼); if (!sd) return;
+        var 局 = sd.局面 || {}, 选 = 局.当前选项 || {}, o = 选[k] || {};
+        var lv = 归(o.等级), 表 = 等级[lv], res = 盒.querySelector('.res');
+        if (!表.c) { res.className = 'res on no'; res.textContent = '这一条锁住了，拒不了。'; return; }
+        var 反抗 = 数(sd.主角 && sd.主角.反抗值, 0);
+        var 耗 = 表.c[0] + Math.floor(Math.random() * (表.c[1] - 表.c[0] + 1));
+        if (反抗 < 耗) { res.className = 'res on no'; res.textContent = '反抗值不够（要 ' + 耗 + '，你只有 ' + 反抗 + '）。'; return; }
+        var 掷 = Math.floor(Math.random() * 100) + 1, 成 = 掷 < 表.r;
+        try {
+          updateVariablesWith(function (v) {
+            v = v || {}; if (!v.stat_data) v.stat_data = {};
+            var pr = v.stat_data.主角 || (v.stat_data.主角 = {});
+            pr.反抗值 = Math.max(0, 反抗 - 耗);
+            var jj = v.stat_data.局面 || (v.stat_data.局面 = {});
+            jj.玩家拒绝 = String(k);
+            jj.判定结果 = { 选项: String(o.文本 || ''), 等级: lv, 消耗: 耗, 成功率: 表.r, 掷值: 掷, 结果: 成 ? '成功' : '失败', 效果倍数: 成 ? 1 : 0.6 };
+            return v;
+          }, { type: 'message', message_id: 楼 });
+        } catch (e) {}
+        res.className = 'res on ' + (成 ? 'ok' : 'no');
+        res.textContent = '拒绝了「' + (o.文本 || '') + '」｜ 扣 ' + 耗 + ' · 掷 ' + 掷 + ' · 需 ' + 表.r + ' → ' + (成 ? '成功' : '失败');
+        var 全部 = 盒.querySelectorAll('.rj');
+        for (var m = 0; m < 全部.length; m++) 全部[m].disabled = true;
+      };
+    }
+  }
+
+  刷新();
+  try {
+    if (typeof eventOn === 'function' && typeof tavern_events !== 'undefined') {
+      [tavern_events.MESSAGE_RENDERED, tavern_events.MESSAGE_UPDATED, tavern_events.CHAT_CHANGED, tavern_events.MESSAGE_SWIPED]
+        .forEach(function (t) { if (t) eventOn(t, function () { setTimeout(刷新, 150); }); });
+    }
+  } catch (e) {}
+  try { setInterval(刷新, 2000); } catch (e) {}
+  console.log('[gg2] 状态栏已加载');
+}());
+</script>
+</body>
+</html>
