@@ -164,8 +164,16 @@
         var af=数(o.好感度!==undefined?o.好感度:o.开发度,0);
         var st=E(o.关系阶段||o.关系||'—');
         H+='<div class="g"><span class="nm">'+E(名[g])+'</span><span class="st '+阶段类(st)+'">'+st+'</span>'
-          +'<span class="tk re"><i style="width:'+夹((af+100)/2,0,100)+'%"></i></span><span class="af">'+(af>0?'+':'')+af+'</span></div>';
-        if(有(o.状态)) H+='<div class="g"><span class="nm"></span><span style="flex:1;font-size:10.5px;color:#6b7484">'+E(o.状态)+'</span></div>';
+          +'<span class="tk re"><i style="width:'+夹((af+100)/2,0,100)+'%"></i></span><span class="af">'+(af>0?'+':'')+af+'</span>'
+          +(数(o.开发度)?'<span class="af" style="color:#d8a0e0">开'+数(o.开发度)+'</span>':'')+'</div>';
+        var 细=[];
+        if(有(o.状态)) 细.push(E(o.状态));
+        if(有(o.身体记忆)) 细.push('记得：'+E(o.身体记忆));
+        var 器=[['胸',o.胸],['阴',o.阴部],['后',o.后穴]];
+        for(var q=0;q<器.length;q++){var v=器[q][1]||{};
+          if(数(v.开发度)||有(v.现状)) 细.push('【'+器[q][0]+'】'+数(v.开发度)+(v.破瓜?' 已破':'')+(有(v.现状)?'　'+E(v.现状):''));}
+        if(有(o.已封死)) 细.push('已封死：'+E(o.已封死));
+        if(细.length) H+='<div class="g"><span class="nm"></span><span style="flex:1;font-size:10.5px;color:#6b7484;line-height:1.6">'+细.join('　·　')+'</span></div>';
       }
       H+='</div></details>';
     }
