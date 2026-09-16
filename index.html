@@ -252,14 +252,14 @@
       H+='</div>';
       H+='<div class="opt" style="border-style:dashed;margin-top:6px">'
         +'<span class="no">✦</span>'
-        +'<span class="tx">自己来 —— 不按她摆的，照自己的想法硬做一次</span>'
+        +'<span class="tx">自定义 —— 写一件你想做的事，照自己的来（掏空反抗值，一局顶多一两次）</span>'
         +'<span class="lv">50~70</span>'
         +'<span class="btns">'
         +'<input class="gg-free" placeholder="你想做什么" maxlength="40" style="width:118px;background:#0f141c;border:1px solid #333d4d;color:#d6dded;border-radius:5px;padding:2px 6px;font-size:11px;font-family:inherit">'
-        +'<button class="fr" type="button"'+(当前反抗<50?' disabled title="反抗值不够"':'')+'>自定义</button>'
+        +'<button class="fr" type="button">自定义</button>'
         +'</span></div>';
       H+='<div class="res"></div>';
-      H+='<div class="tip">拒绝＝花抵抗值跟她顶（等级越高越贵越难成）；无视＝不管这条，什么都不花；自己来＝照自己的想法做一次，代价最大，一局基本只用一两次。</div>';
+      H+='<div class="tip">拒绝＝花抵抗值跟她顶（等级越高越贵越难成）；无视＝不管这条，什么都不花；自定义＝照自己的想法做一次，**掏空反抗值**，一局基本只用一两次。</div>';
     }else{
       H+='<div class="tip">这一层她没有摆选项，等她自己动手。</div>';
       if(有(局.今日指令)) H+='<div class="box" style="margin-top:5px"><div class="row"><span class="k">今日指令</span><span class="v">'+E(局.今日指令)+'</span></div></div>';
@@ -358,7 +358,7 @@
       var 耗=50+Math.floor(Math.random()*21);
       var res=盒.querySelector('.res');
       if(!想做){ if(res){res.className='res on no';res.textContent='写一句你想做什么。';} return; }
-      if(反抗<耗){ if(res){res.className='res on no';res.textContent='反抗值不够（要 '+耗+'，你只有 '+反抗+'）。';} return; }
+      /* 自定义不设门槛：不够也照扣，扣到 0 —— 这是「用一次就掏空」的代价 */
       await 写(function(pr,jj){
         pr.反抗值=Math.max(0,反抗-耗);
         jj.玩家拒绝='自定义';
