@@ -368,8 +368,9 @@
     var 要发 = 报给AI || 文案;
     try{
       if(typeof triggerSlash==='function'){
-        await triggerSlash('/setinput ' + JSON.stringify(要发));   /* ① 内容进输入框 */
-        await triggerSlash('/send');                              /* ② 发送（不在输入框留残余） */
+        await triggerSlash('/setinput ' + JSON.stringify(要发));   /* ① 内容进输入框，玩家能看见 */
+        await new Promise(function(r){setTimeout(r,260);});        /* ② 停一下，让他看清 */
+        await triggerSlash('/send ' + JSON.stringify(要发));        /* ③ 带内容发送（不带参数会发空值） */
       } else {
         var ta=document.querySelector('#send_textarea')||(window.parent&&window.parent.document.querySelector('#send_textarea'));
         if(ta){ ta.value=要发; ta.dispatchEvent(new Event('input',{bubbles:true})); }
