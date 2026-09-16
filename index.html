@@ -364,18 +364,18 @@
       return v;
     },{type:'message',message_id:(楼>=0?楼:-1)});}catch(e){console.error('[gg2] 写变量失败',e);}
 
-    /* ② 把玩家做了什么，作为用户消息插进聊天（AI 才看得见） */
+    /* ② 写进酒馆的输入框（不发送，让玩家自己按发送键 —— 他自己能看见、能改） */
     var 要发 = 报给AI || 文案;
     try{
-      if(typeof createChatMessages==='function'){
-        await createChatMessages([{role:'user', content:要发}]);
+      if(typeof triggerSlash==='function'){
+        await triggerSlash('/setinput ' + JSON.stringify(要发));
+      } else {
+        var ta=document.querySelector('#send_textarea')||(window.parent&&window.parent.document.querySelector('#send_textarea'));
+        if(ta){ ta.value=要发; ta.dispatchEvent(new Event('input',{bubbles:true})); }
       }
-    }catch(e){console.error('[gg2] 插入消息失败',e);}
+    }catch(e){console.error('[gg2] 写输入框失败',e);}
 
-    /* ③ 触发 AI 生成下一楼 */
-    try{
-      if(typeof triggerSlash==='function'){ await triggerSlash('/trigger'); }
-    }catch(e){console.error('[gg2] 触发生成失败',e);}
+    /* ③ 不自动生成 —— 交给玩家按发送 */
 
     /* ④ 面板上给个即时反馈 */
     var 盒=当前盒(); var res=盒&&盒.querySelector('.res');
