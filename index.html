@@ -144,6 +144,10 @@
 #gg2 .cx .row{display:flex;gap:9px;justify-content:flex-end;margin-top:9px;align-items:center}
 #gg2 .cx .cost{font-size:11px;color:#79839c;margin-right:auto;letter-spacing:.05em}
 
+#gg2 .cx-ok,#gg2 .cx-cancel{min-width:104px;padding:9px 20px;cursor:pointer;font-family:inherit;font-size:13px;letter-spacing:.1em;border-radius:4px;color:#aab3c6;background:linear-gradient(180deg,rgba(233,230,223,.07),rgba(233,230,223,.02));border:1px solid #2b3344;transition:all .2s ease}
+#gg2 .cx-ok{border-color:rgba(232,184,75,.5);color:#e8c98a}
+#gg2 .cx-ok:hover{background:linear-gradient(180deg,rgba(232,184,75,.2),rgba(232,184,75,.06))}
+#gg2 .cx-cancel:hover{color:#eef2fa;border-color:#41506b}
 </style>
 </head>
 <body>
@@ -321,8 +325,8 @@
         +'<div class="hint">不按她摆的来，写一件你想做的事。<b>掏空反抗值，一局顶多一两次。</b></div>'
         +'<textarea data-cx-text placeholder="例：趁她转身，把门锁上"></textarea>'
         +'<div class="row"><span class="cost">消耗 50~70 反抗值</span>'
-        +'<button class="fork-btn" type="button" data-cx-cancel>算了</button>'
-        +'<button class="fork-btn custom" type="button" data-cx-ok>就这么做</button></div>'
+        +'<button class="cx-cancel" type="button" data-cx-cancel>算了</button>'
+        +'<button class="cx-ok" type="button" data-cx-ok>就这么做</button></div>'
         +'</div>';
       H+='<div class="res"></div>';
       H+='<div class="tip">拒绝＝花抵抗值跟她顶（等级越高越贵越难成）；无视＝不管这条，什么都不花；自定义＝照自己的想法做一次，**掏空反抗值**，一局基本只用一两次。</div>';
@@ -433,6 +437,7 @@
     for (var q = 0; q < forks.length; q++) {
       forks[q].onclick = async function () {
         var act = this.getAttribute('data-fork');
+        if (!act || act === 'null') return;   /* ★ 不是 fork 的按钮不要走这条逻辑 */
         var sd = 取数据(楼); if (!sd) return;
         var 反抗 = 数(sd.主角 && sd.主角.反抗值, 0);
         var 选 = (sd.局面 && sd.局面.当前选项) || {};
